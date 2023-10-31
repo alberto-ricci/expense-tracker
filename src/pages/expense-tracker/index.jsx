@@ -1,14 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./index.css";
 import { useAddTransaction } from "../../hooks/useAddTransaction";
 import { useGetUserInfo } from "../../hooks/useGetUserInfo";
-import {
-  useGetTransactions,
-  transactionTotals,
-} from "../../hooks/useGetTransactions";
+import { useGetTransactions } from "../../hooks/useGetTransactions";
 import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { auth } from "../../config/firebase-config";
+import Profile from "./expense-tracker-components/profile";
+import Balance from "./expense-tracker-components/balance";
+import Summary from "./expense-tracker-components/summary";
+import TransactionForm from "./expense-tracker-components/transactionForm";
+import TransactionHistory from "./expense-tracker-components/transactionHistory";
+import Message from "./expense-tracker-components/message";
 
 export const ExpenseTracker = () => {
   const { addTransaction } = useAddTransaction();
@@ -23,6 +26,14 @@ export const ExpenseTracker = () => {
   const [success, setSuccess] = useState(null);
 
   const { balance, income, expenses } = transactionTotals;
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (error) setError(null);
+      if (success) setSuccess(null);
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [error, success]);
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -45,13 +56,9 @@ export const ExpenseTracker = () => {
       setTransactionAmount("");
       setTransactionType("expense");
       setSuccess("Transaction added successfully!");
-      setError(null);
-      setTimeout(() => setSuccess(null), 3000);
     } catch (error) {
       console.error("Error adding transaction: ", error);
       setError("Failed to add transaction. Please try again.");
-      setSuccess(null);
-      setTimeout(() => setError(null), 3000);
     }
   };
 
@@ -66,108 +73,36 @@ export const ExpenseTracker = () => {
   };
 
   return (
-    <>
-      <div className="expense-tracker">
-        <div className="container">
-          {profilePhoto && (
-            <div className="profile">
-              <img className="profile-photo" src={profilePhoto} alt="Profile" />
-              <button className="sign-out-button" onClick={signUserOut}>
-                Sign Out
-              </button>
-            </div>
-          )}
-          <h1>{name}'s Expense Tracker</h1>
-          <div className="balance">
-            <h3>Your Balance:</h3>
-            <h2
-              className={
-                balance.toFixed(2) > 0
-                  ? "positive"
-                  : balance.toFixed(2) < 0
-                  ? "negative"
-                  : ""
-              }
-            >
-              {balance.toFixed(2)}€
-            </h2>
-          </div>
-          <div className="summary">
-            <div className="income">
-              <h4>Income</h4>
-              <p>{income}€</p>
-            </div>
-            <div className="expenses">
-              <h4>Expenses</h4>
-              <p>{expenses}€</p>
-            </div>
-          </div>
-          <form className="add-transaction" onSubmit={onSubmit}>
-            <input
-              type="text"
-              placeholder="Add transaction"
-              required
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-            <input
-              type="number"
-              placeholder="Amount"
-              required
-              value={transactionAmount}
-              onChange={(e) => setTransactionAmount(e.target.value)}
-            />
-            <div className="radio-container">
-              <label>
-                <input
-                  type="radio"
-                  name="transactionType"
-                  value="expense"
-                  checked={transactionType === "expense"}
-                  onChange={(e) => setTransactionType(e.target.value)}
-                />
-                Expense
-              </label>
-              <label>
-                <input
-                  type="radio"
-                  name="transactionType"
-                  value="income"
-                  checked={transactionType === "income"}
-                  onChange={(e) => setTransactionType(e.target.value)}
-                />
-                Income
-              </label>
-            </div>
-            <button type="submit">Add Transaction</button>
-          </form>
-          {error && <p className="error-message">{error}</p>}
-          {success && <p className="success-message">{success}</p>}
+    <div className="expense-tracker">
+      <div className="balance-container">
+        {profilePhoto && (
+          <Profile profilePhoto={profilePhoto} signUserOut={signUserOut} />
+        )}
+        <h1>{name}'s Expense Tracker</h1>
+        <Balance balance={balance} />
+        <Summary income={income} expenses={expenses} />
+      </div>
+      <div className="transaction-container">
+        <div className="transaction-form">
+          <TransactionForm
+            onSubmit={onSubmit}
+            description={description}
+            setDescription={setDescription}
+            transactionAmount={transactionAmount}
+            setTransactionAmount={setTransactionAmount}
+            transactionType={transactionType}
+            setTransactionType={setTransactionType}
+          />
+          {error && <Message type="error" text={error} />}
+          {success && <Message type="success" text={success} />}
         </div>
       </div>
 
-      <div className="transactions">
-        <h3>Transaction History</h3>
-        <ul>
-          {transactions &&
-            transactions.map((transaction, index) => {
-              const { description, transactionAmount, transactionType } =
-                transaction;
-              return (
-                <li key={index}>
-                  <h4>{description}</h4>
-                  <p>
-                    €{transactionAmount.toFixed(2)} <span>-</span>
-                    <label className={transactionType}>
-                      {transactionType.charAt(0).toUpperCase() +
-                        transactionType.slice(1)}
-                    </label>
-                  </p>
-                </li>
-              );
-            })}
-        </ul>
+      <div className="history-container">
+        <div className="transactions-history">
+          <TransactionHistory transactions={transactions} />
+        </div>
       </div>
-    </>
+    </div>
   );
 };

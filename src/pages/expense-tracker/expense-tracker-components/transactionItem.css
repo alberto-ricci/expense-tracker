@@ -1,0 +1,21 @@
+li h4 {
+  display: inline-block;
+  margin: 0;
+}
+
+li p {
+  display: inline;
+  margin: 0;
+}
+
+li label {
+  font-weight: bold;
+}
+
+.expense {
+  color: #e74c3c;
+}
+
+.income {
+  color: #2ecc71;
+}

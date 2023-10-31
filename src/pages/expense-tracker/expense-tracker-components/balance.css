@@ -1,0 +1,12 @@
+.balance {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.positive {
+  color: #2ecc71;
+}
+
+.negative {
+  color: #e74c3c;
+}

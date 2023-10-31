@@ -1,0 +1,54 @@
+.transactions ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.transactions h3 {
+  font-size: 1.5em;
+  color: #333;
+}
+
+.transactions li {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.transactions h4,
+.transactions p {
+  margin: 0;
+  font-size: 1em;
+}
+
+.transactions h4 {
+  color: #333;
+}
+
+.transactions p {
+  color: #777;
+}
+
+.transactions label {
+  font-weight: bold;
+  font-size: 0.9em;
+}
+
+.transactions li:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.transactions label.expense {
+  color: #e74c3c;
+}
+
+.transactions label.income {
+  color: #2ecc71;
+}
+
+.transactions p span {
+  margin: 0 5px;
+  color: #777;
+}
