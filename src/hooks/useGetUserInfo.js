@@ -1,9 +1,35 @@
-export const useGetUserInfo = () => {
-  const auth = localStorage.getItem("auth");
-  if (!auth) {
-    return { name: "", profilePhoto: "", userID: "", isAuth: false };
-  }
+import { useState, useEffect } from "react";
+import { auth } from "../config/firebase-config";
 
-  const { name, profilePhoto, userID, isAuth } = JSON.parse(auth);
-  return { name, profilePhoto, userID, isAuth };
+export const useGetUserInfo = () => {
+  const [userInfo, setUserInfo] = useState({
+    name: "",
+    profilePhoto: "",
+    userID: "",
+    isAuth: false,
+  });
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUserInfo({
+          name: user.displayName || "",
+          profilePhoto: user.photoURL || "",
+          userID: user.uid || "",
+          isAuth: true,
+        });
+      } else {
+        setUserInfo({
+          name: "",
+          profilePhoto: "",
+          userID: "",
+          isAuth: false,
+        });
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  return userInfo;
 };

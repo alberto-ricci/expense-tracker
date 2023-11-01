@@ -1,35 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { auth, provider } from "../../config/firebase-config";
 import { signInWithPopup } from "firebase/auth";
-import { useNavigate, Navigate } from "react-router-dom";
-import { useGetUserInfo } from "../../hooks/useGetUserInfo";
 import "./index.css";
 
-export const Auth = () => {
-  const navigate = useNavigate();
+export const Auth = ({ setIsAuthenticated }) => {
   const [error, setError] = useState(null);
-  const { isAuth } = useGetUserInfo;
 
   const signInWithGoogle = async () => {
     try {
-      const results = await signInWithPopup(auth, provider);
-      const authInfo = {
-        userID: results.user.uid,
-        name: results.user.displayName,
-        profilePhoto: results.user.photoURL,
-        isAuth: true,
-      };
-      localStorage.setItem("auth", JSON.stringify(authInfo));
-      navigate("/expense-tracker");
+      await signInWithPopup(auth, provider);
+      setIsAuthenticated(true);
     } catch (error) {
       console.error("Error signing in with Google", error);
       setError("Failed to sign in with Google. Please try again.");
+      setIsAuthenticated(false);
     }
   };
-
-  if (isAuth) {
-    return <Navigate to="/expense-tracker" />;
-  }
 
   return (
     <div className="login-page">

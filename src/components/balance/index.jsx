@@ -3,21 +3,17 @@ import "./index.css";
 import { useAddTransaction } from "../../hooks/useAddTransaction";
 import { useGetUserInfo } from "../../hooks/useGetUserInfo";
 import { useGetTransactions } from "../../hooks/useGetTransactions";
-import { signOut } from "firebase/auth";
-import { useNavigate } from "react-router-dom";
-import { auth } from "../../config/firebase-config";
-import Profile from "./expense-tracker-components/profile";
-import Balance from "./expense-tracker-components/balance";
-import Summary from "./expense-tracker-components/summary";
-import TransactionForm from "./expense-tracker-components/transactionForm";
-import TransactionHistory from "./expense-tracker-components/transactionHistory";
-import Message from "./expense-tracker-components/message";
 
-export const ExpenseTracker = () => {
+import Balance from "./balance-components/balance";
+import Summary from "./balance-components/summary";
+import TransactionForm from "./balance-components/transactionForm";
+import TransactionHistory from "./balance-components/transactionHistory";
+import Message from "./balance-components/message";
+
+export const ExpenseTracker = ({ setIsAuthenticated }) => {
   const { addTransaction } = useAddTransaction();
   const { transactions, transactionTotals } = useGetTransactions();
   const { userID, isAuth, name, profilePhoto } = useGetUserInfo();
-  const navigate = useNavigate();
 
   const [description, setDescription] = useState("");
   const [transactionAmount, setTransactionAmount] = useState("");
@@ -62,23 +58,9 @@ export const ExpenseTracker = () => {
     }
   };
 
-  const signUserOut = async () => {
-    try {
-      await signOut(auth);
-      localStorage.clear();
-      navigate("/");
-    } catch (err) {
-      console.error("Error signing out: ", err);
-    }
-  };
-
   return (
     <div className="expense-tracker">
       <div className="balance-container">
-        {profilePhoto && (
-          <Profile profilePhoto={profilePhoto} signUserOut={signUserOut} />
-        )}
-        <h1>{name}'s Expense Tracker</h1>
         <Balance balance={balance} />
         <Summary income={income} expenses={expenses} />
       </div>
