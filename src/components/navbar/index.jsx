@@ -1,7 +1,6 @@
 import React from "react";
 import { auth } from "../../config/firebase-config";
 import { signOut } from "firebase/auth";
-import "./index.css";
 import Profile from "./navbar-components/Profile";
 import Logout from "./navbar-components/logout";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -10,7 +9,7 @@ import {
   faMoneyBill,
   faLanguage,
 } from "@fortawesome/free-solid-svg-icons";
-import { Tooltip } from "./navbar-components/Tooltip";
+import "./index.css";
 
 function Navbar({ profilePhoto, userName }) {
   const signUserOut = async () => {
@@ -22,34 +21,42 @@ function Navbar({ profilePhoto, userName }) {
   };
 
   const handleThemeChange = () => {};
-
   const handleCurrencyChange = () => {};
-
   const handleLanguageChange = () => {};
 
   return (
-    <div className="navbar">
-      {profilePhoto && <Profile profilePhoto={profilePhoto} />}
-      <h1>{userName.split(" ")[0]}'s Expense Tracker</h1>
-      <div className="navbar-buttons">
-        <Tooltip text="Change Theme">
-          <button onClick={handleThemeChange}>
+    <nav className="navbar navbar-expand-lg navbar-light bg-light">
+      <div className="container-fluid">
+        {profilePhoto && <Profile profilePhoto={profilePhoto} />}
+        <span className="navbar-brand mb-0 h1">
+          {userName.split(" ")[0]}'s Expense Tracker
+        </span>
+        <div className="navbar-nav ml-auto">
+          <button
+            className="btn btn-outline-secondary"
+            onClick={handleThemeChange}
+            title="Change Theme"
+          >
             <FontAwesomeIcon icon={faPalette} />
           </button>
-        </Tooltip>
-        <Tooltip text="Change Currency">
-          <button onClick={handleCurrencyChange}>
+          <button
+            className="btn btn-outline-secondary ml-2"
+            onClick={handleCurrencyChange}
+            title="Change Currency"
+          >
             <FontAwesomeIcon icon={faMoneyBill} />
           </button>
-        </Tooltip>
-        <Tooltip text="Change Language">
-          <button onClick={handleLanguageChange}>
+          <button
+            className="btn btn-outline-secondary ml-2"
+            onClick={handleLanguageChange}
+            title="Change Language"
+          >
             <FontAwesomeIcon icon={faLanguage} />
           </button>
-        </Tooltip>
+          <Logout signUserOut={signUserOut} />
+        </div>
       </div>
-      <Logout signUserOut={signUserOut} />
-    </div>
+    </nav>
   );
 }
 

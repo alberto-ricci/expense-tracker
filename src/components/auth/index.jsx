@@ -28,7 +28,7 @@ export const Auth = ({ setIsAuthenticated }) => {
         style={{ maxWidth: "800px" }}
       >
         <h1 className="text-center mb-4">Expense Tracker Project</h1>
-        <p className="text-center mt-5">Sign in with Google to continue</p>
+        <p className="text-center mt-4">Sign in with Google to continue</p>
         {error && <p className="text-danger">{error}</p>}
         <div className="d-flex justify-content-center">
           <button className="btn btn-primary" onClick={signInWithGoogle}>
